@@ -6,7 +6,7 @@
 #define DEFAULT_MUSIC_PATH "../resources/musics/"
 #define DEFAULT_FONT_PATH "../resources/fonts/"
 
-#define TITLE "Titulo Janela"
+#define TITLE "2048 Tree"
 
 #define WINDOW_HEIGHT 600
 #define WINDOW_WIDTH 800
