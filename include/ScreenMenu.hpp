@@ -13,7 +13,9 @@ class ScreenMenu : Screen {
     void update();
 
   private:
-    sf::Sprite sprite;
+    sf::Sprite background;
+    sf::Sprite btnPlay;
+    sf::Sprite btnAbout;
 };
 
 #endif
