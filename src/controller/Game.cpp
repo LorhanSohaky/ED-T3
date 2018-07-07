@@ -1,4 +1,5 @@
 #include "../../include/Game.hpp"
+#include "../../include/ScreenJogar.hpp"
 #include "../../include/ScreenMenu.hpp"
 #include "../../include/TextureManager.hpp"
 
@@ -18,14 +19,19 @@ Game::Game( const std::string& titulo,
 
 void Game::run() {
     ScreenMenu menu( gameRef );
+    ScreenJogar jogar( gameRef );
 
     while( gameRef->window->isOpen() ) {
         switch( gameRef->nextScreen ) {
             case MENU:
                 menu.update();
                 break;
+            case JOGAR:
+                jogar.update();
+                break;
             default:
                 menu.update();
+                break;
         }
     }
 }
