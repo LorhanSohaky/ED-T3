@@ -43,6 +43,6 @@ class Tree {
     Node< T >* searchByValue( Node< T >* const node, const T& value ) const;
 };
 
-#include "../Tree.cpp"
+#include "../src/model/Tree.cpp"
 
 #endif

@@ -17,6 +17,6 @@ class Node {
     T value;
 };
 
-#include "../Node.cpp"
+#include "../src/model/Node.cpp"
 
 #endif
