@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <cstdlib>
 
-#define RADIUS 20
+#define RADIUS 30
 
 int compare( const int left, const int right );
 
@@ -31,7 +31,7 @@ void Tree::destroy( Node** node ) {
 }
 
 void Tree::insert( const int& key ) {
-    sf::Vector2f position( WINDOW_WIDTH / 2 + ( RADIUS ) / 2, RADIUS ); // 10 = Circle width/2
+    sf::Vector2f position( WINDOW_WIDTH / 2 + ( RADIUS ) / 2, 0 ); // 10 = Circle width/2
     insert( &( this->root ), key, position );
 }
 
@@ -259,9 +259,11 @@ void Tree::drawNode( Node* node, sf::RenderTarget& target, sf::RenderStates stat
 
     sf::Text number( std::to_string( node->getKey() ), FontManager::get( "padrao" ) );
     number.setFillColor( sf::Color::Black );
-    number.setPosition( node->getValue().getGlobalBounds().left +
-                            number.getGlobalBounds().width / 2,
-                        node->getValue().getPosition().y );
+    number.setOrigin( number.getGlobalBounds().left + number.getGlobalBounds().width / 2.0f,
+                      number.getGlobalBounds().top + number.getGlobalBounds().height / 2.0f );
+    number.setPosition(
+        node->getValue().getPosition().x + node->getValue().getGlobalBounds().width / 2,
+        node->getValue().getPosition().y + node->getValue().getGlobalBounds().height / 2 );
     target.draw( node->getValue(), states );
     target.draw( number, states );
 }
