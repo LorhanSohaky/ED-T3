@@ -31,14 +31,14 @@ void Tree::destroy( Node** node ) {
 }
 
 void Tree::insert( const int& key ) {
-    sf::Vector2f position( WINDOW_WIDTH / 2 + (RADIUS)/2, RADIUS ); // 10 = Circle width/2
+    sf::Vector2f position( WINDOW_WIDTH / 2 + ( RADIUS ) / 2, RADIUS ); // 10 = Circle width/2
     insert( &( this->root ), key, position );
 }
 
 void Tree::insert( Node** node, const int& key, sf::Vector2f& position ) {
     if( *node == nullptr ) {
         sf::CircleShape circle;
-        circle.setRadius(RADIUS);
+        circle.setRadius( RADIUS );
         circle.setOutlineColor( sf::Color::Black );
         circle.setOutlineThickness( 3 );
         circle.setPosition( position.x - circle.getGlobalBounds().width,
@@ -46,7 +46,7 @@ void Tree::insert( Node** node, const int& key, sf::Vector2f& position ) {
         *node = new Node( key, circle, nullptr, nullptr );
         return;
     } else if( key < ( *node )->getKey() ) {
-        position.x -= ( *node )->getValue().getGlobalBounds().width / 2;
+        position.x -= ( *node )->getValue().getGlobalBounds().width;
         position.y = ( *node )->getValue().getPosition().y;
         insert( &( ( *node )->left ), key, position );
         /* if( factor( *node ) >= 2 ) {
@@ -244,7 +244,7 @@ void Tree::drawNode( Node* node, sf::RenderTarget& target, sf::RenderStates stat
     if( node->right != nullptr ) {
         sf::Vertex line[ 2 ];
         line[ 0 ].position = sf::Vector2f(
-         node->getValue().getPosition().x + node->getValue().getGlobalBounds().width / 2,
+            node->getValue().getPosition().x + node->getValue().getGlobalBounds().width / 2,
             node->getValue().getGlobalBounds().top + node->getValue().getGlobalBounds().height );
         line[ 1 ].position = sf::Vector2f( node->right->getValue().getGlobalBounds().left +
                                                node->right->getValue().getGlobalBounds().width / 2,
