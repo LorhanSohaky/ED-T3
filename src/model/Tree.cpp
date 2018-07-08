@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <cstdlib>
 
+#define RADIUS 20
+
 int compare( const int left, const int right );
 
 int heightNode( Node* node );
@@ -29,41 +31,42 @@ void Tree::destroy( Node** node ) {
 }
 
 void Tree::insert( const int& key ) {
-    sf::Vector2f position( WINDOW_WIDTH / 2 + 10, 20 ); // 10 = Circle width/2
+    sf::Vector2f position( WINDOW_WIDTH / 2 + (RADIUS)/2, RADIUS ); // 10 = Circle width/2
     insert( &( this->root ), key, position );
 }
 
 void Tree::insert( Node** node, const int& key, sf::Vector2f& position ) {
     if( *node == nullptr ) {
-        sf::CircleShape circle( 20, 100 );
+        sf::CircleShape circle;
+        circle.setRadius(RADIUS);
         circle.setOutlineColor( sf::Color::Black );
         circle.setOutlineThickness( 3 );
         circle.setPosition( position.x - circle.getGlobalBounds().width,
-                            position.y + 20 + circle.getGlobalBounds().height );
+                            position.y + RADIUS + circle.getGlobalBounds().height );
         *node = new Node( key, circle, nullptr, nullptr );
         return;
     } else if( key < ( *node )->getKey() ) {
         position.x -= ( *node )->getValue().getGlobalBounds().width / 2;
         position.y = ( *node )->getValue().getPosition().y;
         insert( &( ( *node )->left ), key, position );
-        if( factor( *node ) >= 2 ) {
+        /* if( factor( *node ) >= 2 ) {
             if( key < ( *node )->left->getKey() ) {
                 rotateRight( node );
             } else {
                 doubleRotateRight( node );
             }
-        }
+        } */
     } else if( key > ( *node )->getKey() ) {
         position.x += ( *node )->getValue().getGlobalBounds().width;
         position.y = ( *node )->getValue().getPosition().y;
         insert( &( ( *node )->right ), key, position );
-        if( factor( *node ) >= 2 ) {
+        /* if( factor( *node ) >= 2 ) {
             if( key > ( *node )->right->getKey() ) {
                 rotateLeft( node );
             } else {
                 doubleRotateLeft( node );
             }
-        }
+        } */
     } else {
         throw std::runtime_error( "Duplicate key" );
     }
@@ -224,11 +227,11 @@ void Tree::draw( sf::RenderTarget& target, sf::RenderStates states ) const {
 void Tree::drawNode( Node* node, sf::RenderTarget& target, sf::RenderStates states ) const {
     if( node->left != nullptr ) {
         sf::Vertex line[ 2 ];
-        line[ 0 ].position = sf::Vector2f( node->getValue().getPosition().x +
-                                               node->getValue().getGlobalBounds().width / 2,
-                                           node->getValue().getPosition().y );
-        line[ 1 ].position = sf::Vector2f( node->left->getValue().getPosition().x +
-                                               node->getValue().getGlobalBounds().width / 2,
+        line[ 0 ].position = sf::Vector2f(
+            node->getValue().getGlobalBounds().left + node->getValue().getGlobalBounds().width / 2,
+            node->getValue().getGlobalBounds().top + node->getValue().getGlobalBounds().height );
+        line[ 1 ].position = sf::Vector2f( node->left->getValue().getGlobalBounds().left +
+                                               node->left->getValue().getGlobalBounds().width / 2,
                                            node->left->getValue().getPosition().y );
         for( int i = 0; i < 2; i++ ) {
             line[ i ].color = sf::Color::Blue;
@@ -240,11 +243,11 @@ void Tree::drawNode( Node* node, sf::RenderTarget& target, sf::RenderStates stat
 
     if( node->right != nullptr ) {
         sf::Vertex line[ 2 ];
-        line[ 0 ].position = sf::Vector2f( node->getValue().getPosition().x +
-                                               node->getValue().getGlobalBounds().width / 2,
-                                           node->getValue().getPosition().y );
-        line[ 1 ].position = sf::Vector2f( node->right->getValue().getPosition().x +
-                                               node->getValue().getGlobalBounds().width / 2,
+        line[ 0 ].position = sf::Vector2f(
+         node->getValue().getPosition().x + node->getValue().getGlobalBounds().width / 2,
+            node->getValue().getGlobalBounds().top + node->getValue().getGlobalBounds().height );
+        line[ 1 ].position = sf::Vector2f( node->right->getValue().getGlobalBounds().left +
+                                               node->right->getValue().getGlobalBounds().width / 2,
                                            node->right->getValue().getPosition().y );
         for( int i = 0; i < 2; i++ ) {
             line[ i ].color = sf::Color::Blue;
