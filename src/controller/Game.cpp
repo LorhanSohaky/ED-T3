@@ -1,4 +1,5 @@
 #include "../../include/Game.hpp"
+#include "../../include/FontManager.hpp"
 #include "../../include/ScreenJogar.hpp"
 #include "../../include/ScreenMenu.hpp"
 #include "../../include/TextureManager.hpp"
@@ -15,6 +16,8 @@ Game::Game( const std::string& titulo,
     gameRef->nextScreen = MENU;
 
     gameRef->inputManager = new InputManager( &gameRef->event, gameRef->window );
+
+    FontManager::add( "padrao", "bebas_neue/BebasNeue-Regular.ttf" );
 }
 
 void Game::run() {
