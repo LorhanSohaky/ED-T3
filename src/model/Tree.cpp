@@ -261,9 +261,10 @@ void Tree::drawNode( Node* node, sf::RenderTarget& target, sf::RenderStates stat
     number.setFillColor( sf::Color::Black );
     number.setOrigin( number.getGlobalBounds().left + number.getGlobalBounds().width / 2.0f,
                       number.getGlobalBounds().top + number.getGlobalBounds().height / 2.0f );
-    number.setPosition(
-        node->getValue().getPosition().x + node->getValue().getGlobalBounds().width / 2,
-        node->getValue().getPosition().y + node->getValue().getGlobalBounds().height / 2 );
+    number.setPosition( node->getValue().getPosition().x +
+                            node->getValue().getGlobalBounds().width / 2,
+                        node->getValue().getPosition().y - number.getGlobalBounds().height / 4 +
+                            node->getValue().getGlobalBounds().height / 2 );
     target.draw( node->getValue(), states );
     target.draw( number, states );
 }
