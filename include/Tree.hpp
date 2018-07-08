@@ -2,47 +2,38 @@
 #define TREE_HPP
 
 #include "Node.hpp"
+#include <SFML/Graphics.hpp>
 #include <iostream>
 
-template < class T >
-class Tree {
+class Tree : public sf::Drawable {
   public:
     explicit Tree();
     ~Tree();
 
-    void insert( const int& key, const T& value );
+    void insert( const int& key );
     void remove( const int& key );
 
     bool searchByKey( const int& key ) const;
-    // Return key
-    int searchByValue( const T& value ) const;
 
-    // Display in-order
-    friend std::ostream& operator<<( std::ostream& out, const Tree< T >& tree ) {
-        return tree.display( out, tree.root );
-    }
+    void draw( sf::RenderTarget& target, sf::RenderStates states ) const;
 
   private:
-    Node< T >* root;
+    Node* root;
 
-    std::ostream& display( std::ostream& out, Node< T >* const node ) const;
+    void destroy( Node** node );
 
-    void destroy( Node< T >** node );
+    void insert( Node** node, const int& key, sf::Vector2f& position );
+    void remove( Node** node, const int& key );
 
-    void insert( Node< T >** node, const int& key, const T& value );
-    void remove( Node< T >** node, const int& key );
+    int factor( Node* node );
 
-    int factor( Node< T >* node );
+    void rotateLeft( Node** root );
+    void rotateRight( Node** root );
 
-    void rotateLeft( Node< T >** root );
-    void rotateRight( Node< T >** root );
+    void doubleRotateLeft( Node** root );
+    void doubleRotateRight( Node** root );
 
-    void doubleRotateLeft( Node< T >** root );
-    void doubleRotateRight( Node< T >** root );
-
-    Node< T >* searchByValue( Node< T >* const node, const T& value ) const;
+    void drawNode( Node* node, sf::RenderTarget& target, sf::RenderStates states ) const;
 };
-
-#include "../src/model/Tree.cpp"
 
 #endif

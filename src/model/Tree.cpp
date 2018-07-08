@@ -1,28 +1,24 @@
-#ifdef TREE_HPP
-
+#include "../../include/Tree.hpp"
+#include "../../include/Config.hpp"
+#include "../../include/FontManager.hpp"
 #include <cstddef>
 #include <cstdlib>
 
 int compare( const int left, const int right );
 
-template < class T >
-int heightNode( Node< T >* node );
+int heightNode( Node* node );
 
-template < class T >
-Node< T >* searchSmallerNode( Node< T >* node );
+Node* searchSmallerNode( Node* node );
 
-template < class T >
-Tree< T >::Tree() {
+Tree::Tree() {
     this->root = nullptr;
 }
 
-template < class T >
-Tree< T >::~Tree() {
+Tree::~Tree() {
     destroy( &( this->root ) );
 }
 
-template < class T >
-void Tree< T >::destroy( Node< T >** node ) {
+void Tree::destroy( Node** node ) {
     if( *node != nullptr ) {
         destroy( &( *node )->left );
         destroy( &( *node )->right );
@@ -32,28 +28,24 @@ void Tree< T >::destroy( Node< T >** node ) {
     return;
 }
 
-template < class T >
-std::ostream& Tree< T >::display( std::ostream& out, Node< T >* const node ) const {
-    if( node != nullptr ) {
-        display( out, node->left );
-        out << node->getValue() << ' ';
-        display( out, node->right );
-    }
-    return out;
+void Tree::insert( const int& key ) {
+    sf::Vector2f position( WINDOW_WIDTH / 2 + 10, 20 ); // 10 = Circle width/2
+    insert( &( this->root ), key, position );
 }
 
-template < class T >
-void Tree< T >::insert( const int& key, const T& value ) {
-    insert( &( this->root ), key, value );
-}
-
-template < class T >
-void Tree< T >::insert( Node< T >** node, const int& key, const T& value ) {
+void Tree::insert( Node** node, const int& key, sf::Vector2f& position ) {
     if( *node == nullptr ) {
-        *node = new Node< T >( key, value, nullptr, nullptr );
+        sf::CircleShape circle( 20, 100 );
+        circle.setOutlineColor( sf::Color::Black );
+        circle.setOutlineThickness( 3 );
+        circle.setPosition( position.x - circle.getGlobalBounds().width,
+                            position.y + 20 + circle.getGlobalBounds().height );
+        *node = new Node( key, circle, nullptr, nullptr );
         return;
     } else if( key < ( *node )->getKey() ) {
-        insert( &( ( *node )->left ), key, value );
+        position.x -= ( *node )->getValue().getGlobalBounds().width / 2;
+        position.y = ( *node )->getValue().getPosition().y;
+        insert( &( ( *node )->left ), key, position );
         if( factor( *node ) >= 2 ) {
             if( key < ( *node )->left->getKey() ) {
                 rotateRight( node );
@@ -62,7 +54,9 @@ void Tree< T >::insert( Node< T >** node, const int& key, const T& value ) {
             }
         }
     } else if( key > ( *node )->getKey() ) {
-        insert( &( ( *node )->right ), key, value );
+        position.x += ( *node )->getValue().getGlobalBounds().width;
+        position.y = ( *node )->getValue().getPosition().y;
+        insert( &( ( *node )->right ), key, position );
         if( factor( *node ) >= 2 ) {
             if( key > ( *node )->right->getKey() ) {
                 rotateLeft( node );
@@ -78,13 +72,11 @@ void Tree< T >::insert( Node< T >** node, const int& key, const T& value ) {
         compare( heightNode( ( *node )->left ), heightNode( ( *node )->right ) ) + 1;
 }
 
-template < class T >
-void Tree< T >::remove( const int& key ) {
+void Tree::remove( const int& key ) {
     remove( &( this->root ), key );
 }
 
-template < class T >
-void Tree< T >::remove( Node< T >** node, const int& key ) {
+void Tree::remove( Node** node, const int& key ) {
     if( *node == nullptr ) {
         throw std::runtime_error( "Invalid key" );
     } else if( key < ( *node )->getKey() ) {
@@ -107,7 +99,7 @@ void Tree< T >::remove( Node< T >** node, const int& key ) {
         }
     } else {
         if( ( *node )->left == nullptr || ( *node )->right == nullptr ) {
-            Node< T >* oldNode = ( *node );
+            Node* oldNode = ( *node );
 
             if( ( *node )->left != nullptr ) {
                 *node = ( *node )->left;
@@ -116,11 +108,10 @@ void Tree< T >::remove( Node< T >** node, const int& key ) {
             }
             delete oldNode;
         } else {
-            Node< T >* tmp     = searchSmallerNode( ( *node )->right );
-            Node< T >* oldNode = *node;
+            Node* tmp     = searchSmallerNode( ( *node )->right );
+            Node* oldNode = *node;
 
-            ( *node ) =
-                new Node< T >( tmp->getKey(), tmp->getValue(), oldNode->left, oldNode->right );
+            ( *node ) = new Node( tmp->getKey(), tmp->getValue(), oldNode->left, oldNode->right );
             delete oldNode;
 
             remove( &( *node )->right, ( *node )->getKey() );
@@ -135,9 +126,8 @@ void Tree< T >::remove( Node< T >** node, const int& key ) {
     }
 }
 
-template < class T >
-bool Tree< T >::searchByKey( const int& key ) const {
-    Node< T >* node = this->root;
+bool Tree::searchByKey( const int& key ) const {
+    Node* node = this->root;
 
     while( node != nullptr && key != node->getKey() ) {
         if( key < node->getKey() ) {
@@ -150,38 +140,8 @@ bool Tree< T >::searchByKey( const int& key ) const {
     return node != nullptr;
 }
 
-template < class T >
-int Tree< T >::searchByValue( const T& value ) const {
-    Node< T >* node = searchByValue( this->root, value );
-
-    if( node == nullptr ) {
-        throw std::runtime_error( "No search results found" );
-    }
-
-    return node->getKey();
-}
-
-template < class T >
-Node< T >* Tree< T >::searchByValue( Node< T >* const node, const T& value ) const {
-    if( node == nullptr || value == node->getValue() ) {
-        return node;
-    }
-
-    Node< T >* left  = searchByValue( node->left, value );
-    Node< T >* right = searchByValue( node->right, value );
-
-    if( left != nullptr && value == left->getValue() ) {
-        return left;
-    } else if( right != nullptr && value == right->getValue() ) {
-        return right;
-    } else {
-        return nullptr;
-    }
-}
-
-template < class T >
-void Tree< T >::rotateLeft( Node< T >** root ) {
-    Node< T >* node  = ( *root )->right;
+void Tree::rotateLeft( Node** root ) {
+    Node* node       = ( *root )->right;
     ( *root )->right = node->left;
 
     node->left = *root;
@@ -193,9 +153,8 @@ void Tree< T >::rotateLeft( Node< T >** root ) {
     *root = node;
 }
 
-template < class T >
-void Tree< T >::rotateRight( Node< T >** root ) {
-    Node< T >* node = ( *root )->left;
+void Tree::rotateRight( Node** root ) {
+    Node* node      = ( *root )->left;
     ( *root )->left = node->right;
 
     node->right = *root;
@@ -207,8 +166,7 @@ void Tree< T >::rotateRight( Node< T >** root ) {
     *root = node;
 }
 
-template < class T >
-void Tree< T >::doubleRotateLeft( Node< T >** root ) {
+void Tree::doubleRotateLeft( Node** root ) {
     if( *root == nullptr ) {
         return;
     }
@@ -217,8 +175,7 @@ void Tree< T >::doubleRotateLeft( Node< T >** root ) {
     rotateLeft( root );
 }
 
-template < class T >
-void Tree< T >::doubleRotateRight( Node< T >** root ) {
+void Tree::doubleRotateRight( Node** root ) {
     if( *root == nullptr ) {
         return;
     }
@@ -227,8 +184,7 @@ void Tree< T >::doubleRotateRight( Node< T >** root ) {
     rotateRight( root );
 }
 
-template < class T >
-int Tree< T >::factor( Node< T >* node ) {
+int Tree::factor( Node* node ) {
     return abs( heightNode( node->left ) - heightNode( node->right ) );
 }
 
@@ -240,8 +196,7 @@ int compare( const int left, const int right ) {
     }
 }
 
-template < class T >
-int heightNode( Node< T >* node ) {
+int heightNode( Node* node ) {
     if( node == nullptr ) {
         return -1;
     } else {
@@ -249,9 +204,8 @@ int heightNode( Node< T >* node ) {
     }
 }
 
-template < class T >
-Node< T >* searchSmallerNode( Node< T >* node ) {
-    Node< T >* tmp = node;
+Node* searchSmallerNode( Node* node ) {
+    Node* tmp = node;
     while( tmp->left != nullptr ) {
         tmp = tmp->left;
     }
@@ -259,4 +213,52 @@ Node< T >* searchSmallerNode( Node< T >* node ) {
     return tmp;
 }
 
-#endif
+void Tree::draw( sf::RenderTarget& target, sf::RenderStates states ) const {
+    if( root == nullptr ) {
+        return;
+    }
+
+    drawNode( root, target, states );
+}
+
+void Tree::drawNode( Node* node, sf::RenderTarget& target, sf::RenderStates states ) const {
+    if( node->left != nullptr ) {
+        sf::Vertex line[ 2 ];
+        line[ 0 ].position = sf::Vector2f( node->getValue().getPosition().x +
+                                               node->getValue().getGlobalBounds().width / 2,
+                                           node->getValue().getPosition().y );
+        line[ 1 ].position = sf::Vector2f( node->left->getValue().getPosition().x +
+                                               node->getValue().getGlobalBounds().width / 2,
+                                           node->left->getValue().getPosition().y );
+        for( int i = 0; i < 2; i++ ) {
+            line[ i ].color = sf::Color::Blue;
+        }
+        target.draw( line, 2, sf::PrimitiveType::Lines );
+
+        drawNode( node->left, target, states );
+    }
+
+    if( node->right != nullptr ) {
+        sf::Vertex line[ 2 ];
+        line[ 0 ].position = sf::Vector2f( node->getValue().getPosition().x +
+                                               node->getValue().getGlobalBounds().width / 2,
+                                           node->getValue().getPosition().y );
+        line[ 1 ].position = sf::Vector2f( node->right->getValue().getPosition().x +
+                                               node->getValue().getGlobalBounds().width / 2,
+                                           node->right->getValue().getPosition().y );
+        for( int i = 0; i < 2; i++ ) {
+            line[ i ].color = sf::Color::Blue;
+        }
+        target.draw( line, 2, sf::PrimitiveType::Lines );
+
+        drawNode( node->right, target, states );
+    }
+
+    sf::Text number( std::to_string( node->getKey() ), FontManager::get( "padrao" ) );
+    number.setFillColor( sf::Color::Black );
+    number.setPosition( node->getValue().getGlobalBounds().left +
+                            number.getGlobalBounds().width / 2,
+                        node->getValue().getPosition().y );
+    target.draw( node->getValue(), states );
+    target.draw( number, states );
+}

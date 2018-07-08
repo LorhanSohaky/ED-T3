@@ -1,11 +1,15 @@
 #ifndef NODE_HPP
 #define NODE_HPP
 
-template < class T >
+#include <SFML/Graphics.hpp>
+
 class Node {
   public:
-    explicit Node( const int key, const T value, Node* const left, Node* const right );
-    T getValue() const;
+    explicit Node( const int key,
+                   const sf::CircleShape value,
+                   Node* const left,
+                   Node* const right );
+    sf::CircleShape getValue() const;
     int getKey() const;
 
     Node* left;
@@ -14,9 +18,7 @@ class Node {
 
   private:
     int key;
-    T value;
+    sf::CircleShape value;
 };
-
-#include "../src/model/Node.cpp"
 
 #endif

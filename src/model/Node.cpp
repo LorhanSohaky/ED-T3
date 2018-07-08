@@ -1,7 +1,6 @@
-#ifdef NODE_HPP
+#include "../../include/Node.hpp"
 
-template < class T >
-Node< T >::Node( const int key, const T value, Node* const left, Node* const right ) {
+Node::Node( const int key, const sf::CircleShape value, Node* const left, Node* const right ) {
     this->key    = key;
     this->value  = value;
     this->left   = left;
@@ -9,14 +8,10 @@ Node< T >::Node( const int key, const T value, Node* const left, Node* const rig
     this->height = 0;
 }
 
-template < class T >
-T Node< T >::getValue() const {
+sf::CircleShape Node::getValue() const {
     return this->value;
 }
 
-template < class T >
-int Node< T >::getKey() const {
+int Node::getKey() const {
     return this->key;
 }
-
-#endif
