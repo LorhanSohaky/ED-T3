@@ -2,6 +2,7 @@
 #define SCREEN_JOGAR_HPP
 
 #include "Screen.hpp"
+#include "Tree.hpp"
 #include <SFML/Graphics.hpp>
 
 class ScreenJogar : Screen {
@@ -13,6 +14,7 @@ class ScreenJogar : Screen {
     void update();
 
   private:
+    Tree tree;
 };
 
 #endif
