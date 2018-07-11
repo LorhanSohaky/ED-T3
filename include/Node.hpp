@@ -9,7 +9,7 @@ class Node {
                    const sf::CircleShape value,
                    Node* const left,
                    Node* const right );
-    sf::CircleShape getValue() const;
+    sf::CircleShape& getValue();
     int getKey() const;
 
     Node* left;
